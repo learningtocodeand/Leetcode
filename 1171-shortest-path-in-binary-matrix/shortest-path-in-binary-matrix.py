@@ -14,12 +14,13 @@ class Solution(object):
             return -1
         #distnce matrix
         dist = [[1e9]*col for _ in range(row)]
-        dist[0][0] = 0
+        # 1 because we are counting nodes not edges
+        dist[0][0] = 1
         dx=[-1,1,0,0,-1,1,-1,1]
         dy=[0,0,1,-1,-1,1,1,-1]
 
         #appending source node 1st
-        heapq.heappush(pq,(0,(0,0)))
+        heapq.heappush(pq,(1,(0,0)))
         minPath = 1e9
         while pq:
             dis, points = heapq.heappop(pq)
@@ -36,6 +37,6 @@ class Solution(object):
                     heapq.heappush(pq,(dist[nx][ny],(nx,ny)))
 
         if minPath!= 1e9:
-            return minPath+1
+            return minPath
         else :
             return -1
