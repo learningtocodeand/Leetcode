@@ -1,42 +1,37 @@
-import heapq
-class Solution(object):
-    def shortestPathBinaryMatrix(self, grid):
-        """
-        :type grid: List[List[int]]
-        :rtype: int
-        """
-        pq= []
-        row = len(grid)
-        col = len(grid[0])
+from collections import deque
+from typing import List
 
-        #start condition
-        if grid[0][0]==1:
+class Solution:
+    def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+
+        # if start or end is blocked
+        if grid[0][0] == 1 or grid[n-1][n-1] == 1:
             return -1
-        #distnce matrix
-        dist = [[1e9]*col for _ in range(row)]
-        # 1 because we are counting nodes not edges
-        dist[0][0] = 1
-        dx=[-1,1,0,0,-1,1,-1,1]
-        dy=[0,0,1,-1,-1,1,1,-1]
 
-        #appending source node 1st
-        heapq.heappush(pq,(1,(0,0)))
-        minPath = 1e9
-        while pq:
-            dis, points = heapq.heappop(pq)
-            x,y = points
-            if(x== row-1 and y == col-1):
-                minPath = min(dis,minPath)
+        # 8 directions
+        directions = [
+            (-1, 0), (1, 0), (0, 1), (0, -1),
+            (-1, -1), (-1, 1), (1, -1), (1, 1)
+        ]
 
-            for i in range(8):
-                nx = x+dx[i]
-                ny = y+dy[i]
+        queue = deque()
+        queue.append((0, 0, 1))  # (row, col, distance)
 
-                if 0<= nx < row and 0<= ny < col and grid[nx][ny] == 0 and dis+1<dist[nx][ny]:
-                    dist[nx][ny] = dis+1
-                    heapq.heappush(pq,(dist[nx][ny],(nx,ny)))
+        grid[0][0] = 1  # mark visited
 
-        if minPath!= 1e9:
-            return minPath
-        else :
-            return -1
+        while queue:
+            r, c, dist = queue.popleft()
+
+            # reached destination
+            if r == n - 1 and c == n - 1:
+                return dist
+
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+
+                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:
+                    queue.append((nr, nc, dist + 1))
+                    grid[nr][nc] = 1  # mark visited
+
+        return -1
