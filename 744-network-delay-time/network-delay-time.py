@@ -20,7 +20,8 @@ class Solution(object):
 
         while pq:
             cost,node = heapq.heappop(pq)
-
+            if cost>dist[node]:
+                continue
             for v,wt in adj[node]:
                 newcost = cost+wt
 
